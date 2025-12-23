@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    name: 🚀 Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🔖 Get current version
+      id: current_version
+      run: |
+        VERSION=$(grep '"version"' custom_components/naturstrom_flex/manifest.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: 🔄 Get previous version
+      id: previous_version
+      run: |
+        git show HEAD~1:custom_components/naturstrom_flex/manifest.json > previous_manifest.json || echo '{"version": "0.0.0"}' > previous_manifest.json
+        PREV_VERSION=$(grep '"version"' previous_manifest.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+        echo "version=$PREV_VERSION" >> $GITHUB_OUTPUT
+
+    - name: 🏷️ Tag release
+      if: steps.current_version.outputs.version != steps.previous_version.outputs.version
+      run: |
+        git tag ${{ steps.current_version.outputs.version }}
+        git push origin ${{ steps.current_version.outputs.version }}

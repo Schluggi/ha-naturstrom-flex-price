@@ -1,0 +1,12 @@
+{
+  "domain": "naturstrom_flex",
+  "name": "Naturstrom Flex",
+  "codeowners": ["@lukas"],
+  "config_flow": true,
+  "documentation": "https://github.com/lukas/naturstrom",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/lukas/naturstrom/issues",
+  "requirements": ["beautifulsoup4"],
+  "version": "1.1.0"
+}
