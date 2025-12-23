@@ -182,10 +182,11 @@ def get_current_total() -> Optional[float]:
         # Extract prices
         prices = {}
         for label, price in zip(labels, data):
-            # label like "02\/25 (34,33 ct\/kWh)"
-            month_match = re.search(r'(\d{2}\/\d{2})', label)
+            # label like "02\/25 (34,33 ct\/kWh)" or "02/25 (34,33 ct/kWh)"
+            # Match both escaped (\/) and unescaped (/) slashes
+            month_match = re.search(r'(\d{2})\\?/(\d{2})', label)
             if month_match:
-                month = month_match.group(1)
+                month = f"{month_match.group(1)}/{month_match.group(2)}"
                 prices[month] = price
 
         # Get current month
