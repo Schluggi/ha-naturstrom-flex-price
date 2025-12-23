@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.2.1...v1.2.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* add translation ([3f1dee3](https://github.com/Schluggi/ha-naturstrom-flex-price/commit/3f1dee35c44bb4b869c127c20a5fa81021bfec80))
+
 ## [1.2.1](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.2.0...v1.2.1) (2025-12-23)
 
 
