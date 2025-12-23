@@ -1,7 +1,7 @@
 """Sensor for Naturstrom Flex energy costs."""
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 import requests
@@ -14,11 +14,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import CONF_SCAN_INTERVAL, DEFAULT_NAME, DEFAULT_SCAN_INTERVAL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 URL = "https://www.naturstrom.de/privatkunden/oekostrom/naturstrom-flex"
+SCAN_INTERVAL = timedelta(hours=DEFAULT_SCAN_INTERVAL)
 
 
 def get_current_price() -> Optional[float]:
@@ -166,17 +167,28 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Naturstrom Flex sensor from a config entry."""
     name = config_entry.options.get(CONF_NAME, config_entry.data.get(CONF_NAME, DEFAULT_NAME))
-    async_add_entities([NaturstromFlexSensor(name), NaturstromFlexFixCostsSensor(name)], True)
+    scan_interval_hours = config_entry.options.get(
+        CONF_SCAN_INTERVAL,
+        config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+    )
+    async_add_entities(
+        [
+            NaturstromFlexSensor(name, scan_interval_hours),
+            NaturstromFlexFixCostsSensor(name, scan_interval_hours),
+        ],
+        True,
+    )
 
 
 class NaturstromFlexSensor(SensorEntity):
     """Representation of a Naturstrom Flex sensor."""
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, scan_interval_hours: int = DEFAULT_SCAN_INTERVAL) -> None:
         """Initialize the sensor."""
         self._name = name
         self._state = None
         self._unit = "ct/kWh"
+        self._scan_interval = timedelta(hours=scan_interval_hours)
 
     @property
     def name(self) -> str:
@@ -197,6 +209,16 @@ class NaturstromFlexSensor(SensorEntity):
     def icon(self) -> str:
         """Return the icon."""
         return "mdi:currency-eur"
+
+    @property
+    def should_poll(self) -> bool:
+        """Return True if entity has to be polled for state."""
+        return True
+
+    @property
+    def scan_interval(self):
+        """Return the scan interval."""
+        return self._scan_interval
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
@@ -206,11 +228,12 @@ class NaturstromFlexSensor(SensorEntity):
 class NaturstromFlexFixCostsSensor(SensorEntity):
     """Representation of a Naturstrom Flex fix costs sensor."""
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, scan_interval_hours: int = DEFAULT_SCAN_INTERVAL) -> None:
         """Initialize the sensor."""
         self._name = f"{name} Fix Costs"
         self._state = None
         self._unit = "ct/kWh"
+        self._scan_interval = timedelta(hours=scan_interval_hours)
 
     @property
     def name(self) -> str:
@@ -231,6 +254,16 @@ class NaturstromFlexFixCostsSensor(SensorEntity):
     def icon(self) -> str:
         """Return the icon."""
         return "mdi:currency-eur"
+
+    @property
+    def should_poll(self) -> bool:
+        """Return True if entity has to be polled for state."""
+        return True
+
+    @property
+    def scan_interval(self):
+        """Return the scan interval."""
+        return self._scan_interval
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""

@@ -5,7 +5,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import CONF_SCAN_INTERVAL, DEFAULT_NAME, DEFAULT_SCAN_INTERVAL, DOMAIN
 
 
 class NaturstromFlexConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -23,6 +23,9 @@ class NaturstromFlexConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+                    vol.Optional(
+                        CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL
+                    ): vol.All(vol.Coerce(int), vol.Range(min=1, max=24)),
                 }
             ),
         )
@@ -52,8 +55,20 @@ class NaturstromFlexOptionsFlowHandler(config_entries.OptionsFlow):
                 {
                     vol.Optional(
                         CONF_NAME,
-                        default=self.config_entry.options.get(CONF_NAME, DEFAULT_NAME),
+                        default=self.config_entry.options.get(
+                            CONF_NAME,
+                            self.config_entry.data.get(CONF_NAME, DEFAULT_NAME),
+                        ),
                     ): str,
+                    vol.Optional(
+                        CONF_SCAN_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_SCAN_INTERVAL,
+                            self.config_entry.data.get(
+                                CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                            ),
+                        ),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=1, max=24)),
                 }
             ),
         )
