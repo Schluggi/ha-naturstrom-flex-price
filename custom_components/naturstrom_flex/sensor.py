@@ -94,12 +94,15 @@ def get_current_total() -> Optional[float]:
         soup = BeautifulSoup(response.content, "html.parser")
 
         # Find the script with chartsData7
-        script = soup.find("script", string=lambda s: s and "chartsData7" in s)
-        if not script:
+        scripts = soup.find_all("script")
+        script_text = None
+        for script in scripts:
+            if script.string and "chartsData7" in script.string:
+                script_text = script.string
+                break
+        if not script_text:
             _LOGGER.error("Chart script not found")
             return None
-
-        script_text = script.string
 
         # Extract the data
         start = script_text.find("window['Hoogi91.chartsData']['chartsData7'] = {")
@@ -113,22 +116,23 @@ def get_current_total() -> Optional[float]:
             end = len(script_text)
         data_str = script_text[start:end]
 
-        # Parse labels and data
-        labels_match = re.search(r'labels:\s*\[(.*?)\]', data_str)
-        data_match = re.search(r'data:\s*\[(.*?)\]', data_str)
-
-        if not labels_match or not data_match:
-            _LOGGER.error("Labels or data not found")
-            return None
-
-        labels_str = labels_match.group(1)
-        data_str_match = data_match.group(1)
-
         # Parse labels
-        labels = [label.strip('"\r') for label in labels_str.split(',')]
+        labels_match = re.search(r"labels\s*:\s*\[([^\]]+)\]", data_str, re.S)
+        if not labels_match:
+            _LOGGER.error("Labels not found")
+            return None
+        labels_str = labels_match.group(1)
+        # extract quoted labels
+        labels = re.findall(r'"([^\"]+)"', labels_str)
 
-        # Parse data
-        data = [float(d.strip()) for d in data_str_match.split(',')]
+        # Parse data from datasets -> look for data array inside datasets
+        data_match = re.search(r"datasets\s*:\s*\[\s*\{[^}]*[\'\"]?data[\'\"]?\s*:\s*\[([^\]]+)\]", data_str, re.S)
+        if not data_match:
+            _LOGGER.error("Data not found in datasets")
+            return None
+        data_str_match = data_match.group(1)
+        # Parse data numbers
+        data = [float(d.strip()) for d in data_str_match.split(',') if d.strip()]
 
         # Extract prices
         prices = {}
