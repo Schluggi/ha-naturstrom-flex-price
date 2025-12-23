@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.1.1...v1.2.0) (2025-12-23)
+
+
+### Features
+
+* add update interval ([9e6fc13](https://github.com/Schluggi/ha-naturstrom-flex-price/commit/9e6fc131e0970ef906705d253aee593eb4eb08c9))
+
 ## [1.1.1](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.1.0...v1.1.1) (2025-12-23)
 
 
