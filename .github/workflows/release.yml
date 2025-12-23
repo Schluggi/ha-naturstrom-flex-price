@@ -18,13 +18,25 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: � Check if release commit
+      id: check_release
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" == *"chore(release)"* ]]; then
+          echo "is_release=true" >> $GITHUB_OUTPUT
+        else
+          echo "is_release=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: 🔖 Semantic Release
-      uses: cycjimmy/semantic-release-action@v3
+      if: steps.check_release.outputs.is_release == 'false'
+      uses: cycjimmy/semantic-release-action@v4
       with:
         semantic_version: 1.1.0
         extra_plugins: |
           @semantic-release/changelog
           @semantic-release/git
-        update_file: custom_components/naturstrom_flex/manifest.json
+          @semantic-release/exec
+        exec_options: |
+          prepareCmd: jq '.version = "${nextRelease.version}"' custom_components/naturstrom_flex/manifest.json > tmp.json && mv tmp.json custom_components/naturstrom_flex/manifest.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
