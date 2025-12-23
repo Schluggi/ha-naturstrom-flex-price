@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.1.0...v1.1.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* total cost sensor output ([0a14dea](https://github.com/Schluggi/ha-naturstrom-flex-price/commit/0a14dea60fcc10f59500db925720bd8cd8b24853))
+
 # [1.1.0](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.0.0...v1.1.0) (2025-12-23)
 
 

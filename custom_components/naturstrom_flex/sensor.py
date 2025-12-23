@@ -6,13 +6,21 @@ from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
-
-from homeassistant.components.sensor import SensorEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+try:
+    from homeassistant.components.sensor import SensorEntity
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.const import CONF_NAME
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+except Exception:  # pragma: no cover - allow tests without Home Assistant installed
+    SensorEntity = object
+    ConfigEntry = object
+    CONF_NAME = "name"
+    HomeAssistant = object
+    AddEntitiesCallback = object
+    ConfigType = object
+    DiscoveryInfoType = object
 
 from .const import CONF_SCAN_INTERVAL, DEFAULT_NAME, DEFAULT_SCAN_INTERVAL, DOMAIN
 
@@ -94,42 +102,82 @@ def get_current_total() -> Optional[float]:
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
 
-        # Find the script with chartsData7
-        script = soup.find("script", string=lambda s: s and "chartsData7" in s)
-        if not script:
+        # Find the script with chartsData7 (use get_text() since .string may be None)
+        scripts = soup.find_all("script")
+        script_text = None
+        for script in scripts:
+            text = script.string if script.string is not None else script.get_text()
+            if text and "chartsData7" in text:
+                script_text = text
+                break
+        if not script_text:
             _LOGGER.error("Chart script not found")
             return None
 
-        script_text = script.string
-
-        # Extract the data
-        start = script_text.find("window['Hoogi91.chartsData']['chartsData7'] = {")
-        if start == -1:
-            _LOGGER.error("chartsData7 not found")
+        # Extract the data object: locate any 'chartsData' occurrence and grab the following JS object
+        # Prefer explicit chartsData7 key if present
+        specific = script_text.find('chartsData7')
+        if specific != -1:
+            idxs = [specific]
+        else:
+            idxs = [m.start() for m in re.finditer(r"chartsData", script_text)]
+        if not idxs:
+            _LOGGER.error("chartsData not found in script")
             return None
 
-        # Find the end, before the next ;
-        end = script_text.find(";", start)
-        if end == -1:
-            end = len(script_text)
-        data_str = script_text[start:end]
+        data_str = None
+        for idx in idxs:
+            # find the '=' after this index, then the first '{' after '='
+            eq_pos = script_text.find('=', idx)
+            if eq_pos == -1:
+                # fallback to first '{' after idx
+                brace_start = script_text.find('{', idx)
+            else:
+                brace_start = script_text.find('{', eq_pos)
+            if brace_start == -1:
+                continue
+            # find matching closing brace using simple stack
+            i = brace_start
+            depth = 0
+            while i < len(script_text):
+                if script_text[i] == '{':
+                    depth += 1
+                elif script_text[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        # include trailing characters up to the next ';' if present
+                        end = i + 1
+                        # extend to semicolon if right after
+                        semi = script_text.find(';', end)
+                        if semi != -1 and semi < end + 3:
+                            end = semi
+                        data_str = script_text[brace_start:end]
+                        break
+                i += 1
+            if data_str:
+                break
 
-        # Parse labels and data
-        labels_match = re.search(r'labels:\s*\[(.*?)\]', data_str)
-        data_match = re.search(r'data:\s*\[(.*?)\]', data_str)
-
-        if not labels_match or not data_match:
-            _LOGGER.error("Labels or data not found")
+        if not data_str:
+            _LOGGER.error("Could not extract charts data object")
             return None
-
-        labels_str = labels_match.group(1)
-        data_str_match = data_match.group(1)
 
         # Parse labels
-        labels = [label.strip('"\r') for label in labels_str.split(',')]
+        labels_match = re.search(r"labels\s*:\s*\[([^\]]+)\]", data_str, re.S)
+        if not labels_match:
+            _LOGGER.error("Labels not found")
+            return None
+        labels_str = labels_match.group(1)
+        # extract quoted labels
+        labels = re.findall(r'"([^\"]+)"', labels_str)
 
-        # Parse data
-        data = [float(d.strip()) for d in data_str_match.split(',')]
+        # Parse data from datasets -> look for data array inside datasets
+        data_match = re.search(r"datasets\s*:\s*\[\s*\{[^}]*[\'\"]?data[\'\"]?\s*:\s*\[([^\]]+)\]", data_str, re.S)
+        if not data_match:
+            _LOGGER.error("Data not found in datasets")
+            return None
+        data_str_match = data_match.group(1)
+        # Parse data numbers
+        data = [float(d.strip()) for d in data_str_match.split(',') if d.strip()]
 
         # Extract prices
         prices = {}
