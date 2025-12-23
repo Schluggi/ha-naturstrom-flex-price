@@ -32,9 +32,6 @@ jobs:
       uses: cycjimmy/semantic-release-action@v4
       with:
         semantic_version: 1.1.0
-        extra_plugins: |
-          @semantic-release/changelog
-          @semantic-release/git
-        update_file: custom_components/naturstrom_flex/manifest.json
+        extends: .releaserc.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
