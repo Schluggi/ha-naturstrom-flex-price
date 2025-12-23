@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "jq '.version = \"${nextRelease.version}\"' custom_components/naturstrom_flex/manifest.json > tmp.json && mv tmp.json custom_components/naturstrom_flex/manifest.json"
+      }
+    ],
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ]
+}
