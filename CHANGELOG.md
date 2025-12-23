@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.2.0...v1.2.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* fix total price ([580529d](https://github.com/Schluggi/ha-naturstrom-flex-price/commit/580529dffc233ed29729b9326e7e9d5f3dad3b19))
+
 # [1.2.0](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.1.1...v1.2.0) (2025-12-23)
 
 
