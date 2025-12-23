@@ -29,8 +29,8 @@ jobs:
 
     - name: 🔖 Semantic Release
       if: steps.check_release.outputs.is_release == 'false'
-      uses: cycjimmy/semantic-release-action@v3
-      with:
-        semantic_version: 1.1.0
+      run: |
+        npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/exec @semantic-release/github
+        npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
