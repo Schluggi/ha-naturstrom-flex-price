@@ -29,7 +29,7 @@ jobs:
 
     - name: 🔖 Semantic Release
       if: steps.check_release.outputs.is_release == 'false'
-      uses: cycjimmy/semantic-release-action@v4
+      uses: cycjimmy/semantic-release-action@v3
       with:
         semantic_version: 1.1.0
       env:
