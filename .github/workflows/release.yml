@@ -35,8 +35,6 @@ jobs:
         extra_plugins: |
           @semantic-release/changelog
           @semantic-release/git
-          @semantic-release/exec
-        exec_options: |
-          prepareCmd: jq '.version = "${nextRelease.version}"' custom_components/naturstrom_flex/manifest.json > tmp.json && mv tmp.json custom_components/naturstrom_flex/manifest.json
+        update_file: custom_components/naturstrom_flex/manifest.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
