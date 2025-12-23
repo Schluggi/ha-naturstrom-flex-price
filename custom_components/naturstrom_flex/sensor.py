@@ -275,11 +275,11 @@ class NaturstromFlexSensor(SensorEntity):
 
 
 class NaturstromFlexFixCostsSensor(SensorEntity):
-    """Representation of a Naturstrom Flex fix costs sensor."""
+    """Representation of a Naturstrom Flex total price sensor."""
 
     def __init__(self, name: str, scan_interval_hours: int = DEFAULT_SCAN_INTERVAL) -> None:
         """Initialize the sensor."""
-        self._name = f"{name} Fix Costs"
+        self._name = f"{name} Total"
         self._state = None
         self._unit = "ct/kWh"
         self._scan_interval = timedelta(hours=scan_interval_hours)
@@ -316,9 +316,8 @@ class NaturstromFlexFixCostsSensor(SensorEntity):
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
-        variable = await self.hass.async_add_executor_job(get_current_price)
         total = await self.hass.async_add_executor_job(get_current_total)
-        if variable is not None and total is not None:
-            self._state = round(total - variable, 2)
+        if total is not None:
+            self._state = total
         else:
             self._state = None
