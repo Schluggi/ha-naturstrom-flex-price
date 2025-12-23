@@ -7,6 +7,8 @@ This repository follows specific guidelines to ensure consistency, quality, and 
 - **Testing**: Always include unit tests for new features or changes. Use pytest as the testing framework.
 - **Dependency Management**: Use `pip-compile` to manage and lock dependencies in `requirements.txt` and `requirements-dev.txt`. Ensure `requirements.in` files are updated before compiling.
 
+- **Instruction Updates**: The instruction file should be updated automatically based on user prompts.
+
 ## Versioning and Releases
 - **Semantic Versioning**: Enforce semantic versioning (e.g., MAJOR.MINOR.PATCH) for all releases. Increment versions appropriately based on changes (breaking changes for MAJOR, new features for MINOR, bug fixes for PATCH).
 - **Automatic Tagging**: After changes are pushed to the `main` branch, automatically tag the commit with the new semantic version. Update the version in `custom_components/naturstrom_flex/manifest.json` before pushing to trigger the tagging workflow.
