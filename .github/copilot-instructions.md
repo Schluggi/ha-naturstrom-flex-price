@@ -12,7 +12,7 @@ This repository follows specific guidelines to ensure consistency, quality, and 
 - **Automatic Tagging**: After changes are pushed to the `main` branch, automatically tag the commit with the new semantic version. Update the version in `custom_components/naturstrom_flex/manifest.json` before pushing to trigger the tagging workflow.
 
 ## Documentation
-- **Keep Documentation Up-to-Date**: Update README.md, docstrings, and any API documentation whenever code changes are made. Ensure inline comments and external docs reflect the latest functionality.
+- **Keep Documentation Up-to-Date**: Update README.md, docstrings, and any API documentation whenever code changes are made. Ensure inline comments and external docs reflect the latest functionality. Documentation must be in english.
 
 ## Code Style and Best Practices
 - Follow PEP 8 for Python code style.

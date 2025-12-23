@@ -1,39 +1,39 @@
 # Naturstrom Flex Home Assistant Integration
 
-Dies ist eine benutzerdefinierte Home Assistant Integration zur Überwachung der aktuellen Energiekosten des Naturstrom Flex Tarifs.
+This is a custom Home Assistant integration for monitoring the current energy costs of Naturstrom Flex tariff.
 
 ## Installation
 
-### Über HACS (empfohlen)
+### Via HACS (recommended)
 
-1. Fügen Sie dieses Repository zu HACS als benutzerdefiniertes Repository hinzu.
-2. Installieren Sie die "Naturstrom Flex" Integration.
-3. Starten Sie Home Assistant neu.
+1. Add this repository to HACS as a custom repository.
+2. Install the "Naturstrom Flex" integration.
+3. Restart Home Assistant.
 
-### Manuelle Installation
+### Manual Installation
 
-1. Kopieren Sie den Ordner `custom_components/naturstrom_flex` in das `custom_components` Verzeichnis Ihrer Home Assistant Installation.
-2. Starten Sie Home Assistant neu.
+1. Copy the `custom_components/naturstrom_flex` folder to your Home Assistant's `custom_components` directory.
+2. Restart Home Assistant.
 
-## Konfiguration
+## Configuration
 
-Die Integration kann über die Home Assistant Benutzeroberfläche konfiguriert werden:
+The integration can be configured via the Home Assistant UI:
 
-1. Gehen Sie zu **Einstellungen** > **Geräte & Dienste**.
-2. Klicken Sie auf **Integration hinzufügen**.
-3. Suchen Sie nach "Naturstrom Flex" und wählen Sie es aus.
-4. Folgen Sie dem Setup-Assistenten, um den Sensor-Namen zu konfigurieren (optional).
+1. Go to **Settings** > **Devices & Services**.
+2. Click **Add Integration**.
+3. Search for "Naturstrom Flex" and select it.
+4. Follow the setup wizard to configure the sensor name (optional).
 
-Eine manuelle Konfiguration in `configuration.yaml` ist nicht erforderlich.
+No manual configuration in `configuration.yaml` is required.
 
-## Funktionen
+## Features
 
-- Holt den aktuellen Energiekostensatz von der Naturstrom Website.
-- Stellt den Preis in ct/kWh (Cent pro kWh) bereit.
-- Aktualisiert automatisch.
+- Fetches the current energy price from the Naturstrom website.
+- Provides the price in ct/kWh (cent per kWh).
+- Updates automatically.
 
-## Anforderungen
+## Requirements
 
 - BeautifulSoup4
 
-Die Integration installiert die erforderliche Abhängigkeit automatisch.
+The integration will install the required dependency automatically.
