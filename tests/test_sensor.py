@@ -80,3 +80,33 @@ def test_get_current_total_request_error():
     with patch('requests.get', side_effect=Exception("Network error")):
         total = get_current_total()
         assert total is None
+
+
+@pytest.mark.integration
+def test_get_current_price_live():
+    """Test fetching price from live URL."""
+    price = get_current_price()
+    # Price should be a positive float if the website is accessible
+    assert price is None or (isinstance(price, float) and price > 0)
+
+
+@pytest.mark.integration
+def test_get_current_total_live():
+    """Test fetching total from live URL."""
+    total = get_current_total()
+    # Total should be a positive float if the website is accessible
+    assert total is None or (isinstance(total, float) and total > 0)
+
+
+@pytest.mark.integration
+def test_live_price_consistency():
+    """Test that live price and total are consistent."""
+    price = get_current_price()
+    total = get_current_total()
+    
+    # If both are available, total should be greater than price
+    if price is not None and total is not None:
+        assert total > price, f"Total ({total}) should be greater than variable price ({price})"
+        # Fix costs should be positive
+        fix_costs = total - price
+        assert fix_costs > 0, f"Fix costs ({fix_costs}) should be positive"
