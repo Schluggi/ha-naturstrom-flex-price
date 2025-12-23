@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Naturstrom Flex",
+        "description": "Configure the Naturstrom Flex integration",
+        "data": {
+          "name": "Sensor Name",
+          "scan_interval": "Update Interval (hours)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Naturstrom Flex",
+        "description": "Update the configuration for Naturstrom Flex",
+        "data": {
+          "name": "Sensor Name",
+          "scan_interval": "Update Interval (hours)"
+        }
+      }
+    }
+  }
+}
