@@ -2,6 +2,8 @@
 
 This is a custom Home Assistant integration for monitoring the current energy costs of Naturstrom Flex tariff.
 
+> **Note**: 100% vibe code
+
 ## Installation
 
 ### Via HACS (recommended)
