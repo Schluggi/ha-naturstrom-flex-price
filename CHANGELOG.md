@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Schluggi/ha-naturstrom-flex-price/compare/v1.0.0...v1.1.0) (2025-12-23)
+
+
+### Features
+
+* add sensor for fix costs ([cdf835b](https://github.com/Schluggi/ha-naturstrom-flex-price/commit/cdf835b340287aa80134a2490b54a42012957b17))
+
 # 1.0.0 (2025-12-23)
 
 
